@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.anbank.totomi.assist.TimeRecorder;
 import com.anbank.totomi.config.TotomiConfigure;
 import com.anbank.totomi.po.TotomiTableColumn;
 
@@ -30,12 +31,16 @@ public class DbTransfer {
 	
 	private Connection connection1;
 	private Connection connection2;
+	long theDataSelectedCount;
+	TimeRecorder timeRecorder;
 	
 	public DbTransfer() {
 		try {
 			Class.forName(TotomiConfigure.DB2_CLASS_NAME);
 			connection1 = DriverManager.getConnection(TotomiConfigure.DB2_INST1_URL, TotomiConfigure.DB2_INST1_USERNAME, TotomiConfigure.DB2_INST1_PASSWORD);
 			connection2 = DriverManager.getConnection(TotomiConfigure.DB2_INST2_URL, TotomiConfigure.DB2_INST2_USERNAME, TotomiConfigure.DB2_INST2_PASSWORD);
+			theDataSelectedCount = 0;
+			timeRecorder = new TimeRecorder();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -146,7 +151,7 @@ public class DbTransfer {
 			try {
 				statement1.execute(deleteTableSQL);
 			} catch (com.ibm.db2.jcc.am.SqlSyntaxErrorException e1) {
-				System.out.println("删除 " + TotomiConfigure.DB2_INST2_SCHEMA + "." + tableName + " 失败，很有很能是因为没有这个表 !!");
+//				System.out.println("删除 " + TotomiConfigure.DB2_INST2_SCHEMA + "." + tableName + " 失败，很有很能是因为没有这个表 !!");
 			}
 			statement1.execute(createTableSQL);
 			
@@ -158,6 +163,10 @@ public class DbTransfer {
 //        	Map<Integer, Blob> tmpBlobMap = new HashMap<Integer, Blob>();
         	Set<Integer> tmpBlobSet = new HashSet<Integer>();
             while (resultSet.next()) {
+            	theDataSelectedCount ++;
+            	if (theDataSelectedCount % 2000 == 0) {
+            		System.out.println("获取 " + theDataSelectedCount + " 条数据，历时：\t" + timeRecorder.getTime() + "\t当前表名称：" + tableName);
+            	}
             	int bcIdx = 0;
             	tmpClobMap.clear();
 //            	tmpBlobMap.clear();

@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.anbank</groupId>
+  <artifactId>totomi</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>totomi</name>
+  
+  <dependencies>
+	<!-- https://mvnrepository.com/artifact/com.ibm.db2/db2jcc -->
+	<dependency>
+	    <groupId>com.ibm.db2</groupId>
+	    <artifactId>db2jcc</artifactId>
+	    <version>8.1</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/com.ibm.db2.jcc/db2jcc4 -->
+	<dependency>
+	    <groupId>com.ibm.db2.jcc</groupId>
+	    <artifactId>db2jcc4</artifactId>
+	    <version>10.1</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/com.ibm.db2/db2jcc_license_cu -->
+	<dependency>
+	    <groupId>com.ibm.db2</groupId>
+	    <artifactId>db2jcc_license_cu</artifactId>
+	    <version>9.7</version>
+	</dependency>
+  </dependencies>
+</project>

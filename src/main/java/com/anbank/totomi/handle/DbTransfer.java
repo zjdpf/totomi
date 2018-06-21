@@ -31,8 +31,10 @@ public class DbTransfer {
 	
 	private Connection connection1;
 	private Connection connection2;
-	long theDataSelectedCount;
-	TimeRecorder timeRecorder;
+	private long theDataSelectedCount;
+	private TimeRecorder timeRecorder;
+	private MySQLRecorder mySQLRecorder;
+	private EncodingEngine encodingEngine;
 	
 	public DbTransfer() {
 		try {
@@ -41,6 +43,8 @@ public class DbTransfer {
 			connection2 = DriverManager.getConnection(TotomiConfigure.DB2_INST2_URL, TotomiConfigure.DB2_INST2_USERNAME, TotomiConfigure.DB2_INST2_PASSWORD);
 			theDataSelectedCount = 0;
 			timeRecorder = new TimeRecorder();
+			mySQLRecorder = new MySQLRecorder();
+			encodingEngine = new EncodingEngine();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -69,11 +73,19 @@ public class DbTransfer {
 	public void handle() {
 		List<String> tableNameList = this.getAllTableNames();
 		for (String tableName : tableNameList) {
-			handleOneTable(tableName);
+			try {
+				handleOneTable(tableName);
+			} catch (Exception e) {
+				mySQLRecorder.updateFailed(tableName);
+			}
 		}
 	}
 	
 	public void handleOneTable(String tableName) {
+		if (mySQLRecorder.CheckSucceedSolved(tableName)) {
+			return;
+		}
+		mySQLRecorder.updateProcessing(tableName);
 		tableName = tableName.toUpperCase();
 		List<TotomiTableColumn> columnList = new ArrayList<TotomiTableColumn>();
 		String checkString = null;
@@ -146,16 +158,17 @@ public class DbTransfer {
 //			System.out.println("INSERT Prefix: " + insertPrefix);
             
 			Statement statement1 = connection1.createStatement();
+			Statement statement2 = connection2.createStatement();
 			
 			
 			try {
-				statement1.execute(deleteTableSQL);
+				statement2.execute(deleteTableSQL);
 			} catch (com.ibm.db2.jcc.am.SqlSyntaxErrorException e1) {
 //				System.out.println("删除 " + TotomiConfigure.DB2_INST2_SCHEMA + "." + tableName + " 失败，很有很能是因为没有这个表 !!");
 			}
-			statement1.execute(createTableSQL);
+			statement2.execute(createTableSQL);
 			
-			Statement statement2 = connection2.createStatement();
+			
             
             resultSet = statement1.executeQuery(selectSQL);
             int cnt = 0;
@@ -164,7 +177,7 @@ public class DbTransfer {
         	Set<Integer> tmpBlobSet = new HashSet<Integer>();
             while (resultSet.next()) {
             	theDataSelectedCount ++;
-            	if (theDataSelectedCount % 2000 == 0) {
+            	if (theDataSelectedCount % 10000 == 0) {
             		System.out.println("获取 " + theDataSelectedCount + " 条数据，历时：\t" + timeRecorder.getTime() + "\t当前表名称：" + tableName);
             	}
             	int bcIdx = 0;
@@ -211,6 +224,10 @@ public class DbTransfer {
         			    out.close() ;
                 	}
                 	insertSuffix += (needQuot ? "'" : "");
+                	if (value != null && (typeName.equals("CHARACTER") || typeName.equals("VARCHAR") || typeName.equals("CHAR"))) {
+                		value = value.trim();
+                		value = encodingEngine.encode(tableName, column.getColumnName(), value);
+                	}
                 	insertSuffix += (value == null ? null : value.replaceAll("'", "''"));
                 	insertSuffix += (needQuot ? "'" : "");
                 }
@@ -240,6 +257,7 @@ public class DbTransfer {
             	else {
             		checkString = insertSQL;
                 	statement2.addBatch(insertSQL);
+//                	System.out.println(insertSQL);
                 	cnt ++;
                 	if (cnt >= 1) {
                 		cnt = 0;
@@ -252,16 +270,15 @@ public class DbTransfer {
             }
             
             // for test on real environment because data is too big for me to store !!
-            statement1.execute(deleteTableSQL);
+            statement2.execute(deleteTableSQL);
+            
+            mySQLRecorder.updateSucceed(tableName);
 			
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("check String: " + checkString);
+			mySQLRecorder.updateFailed(tableName);
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		
-		
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -270,7 +287,7 @@ public class DbTransfer {
 //		transfer.handleOneTable("act");
 //		transfer.getAllTableNames();
 		transfer.handle();
-//		transfer.handleOneTable("EMP_PHOTO");
+//		transfer.handleOneTable("A00003_TH");
 	}
 	
 }

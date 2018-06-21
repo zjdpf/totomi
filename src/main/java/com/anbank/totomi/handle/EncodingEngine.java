@@ -41,6 +41,8 @@ public class EncodingEngine {
 			e.printStackTrace();
 		}  
 		redisClient = new RedisClient();
+		// 使用前清空Redis数据库
+		redisClient.forceClean();
 	}
 	
 	private class InnerObj {
@@ -221,7 +223,7 @@ public class EncodingEngine {
 	// main for test
 	public static void main(String[] args) {
 		EncodingEngine engine = new EncodingEngine();
-		engine.encodingOneString("刘德华汪诗豪哈哈02341不知道Azfc“及,zf87999");
+		engine.encodingOneString("刘德华子非鱼哈哈02341不知道Azfc“及,zf87999");
 //		engine.test();
 	}
 	

@@ -29,10 +29,6 @@ public class RedisClient {
     // main for test
     public static void main(String[] args) {
     	RedisClient client = new RedisClient();
-//    	client.set("wang", "wang shihao");
-//    	client.set("ÍôÊ«ºÀ", "ÁõµÂ»ª");
     	client.forceClean();
-    	System.out.println(client.get("wang"));
-    	System.out.println(client.get("ÍôÊ«ºÀ"));
     }
 }

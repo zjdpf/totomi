@@ -3,7 +3,6 @@ package com.anbank.totomi.handle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
@@ -44,6 +43,7 @@ public class DbTransfer {
 			theDataSelectedCount = 0;
 			timeRecorder = new TimeRecorder();
 			mySQLRecorder = new MySQLRecorder();
+			mySQLRecorder.forceClean();
 			encodingEngine = new EncodingEngine();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -269,8 +269,8 @@ public class DbTransfer {
             	statement2.executeBatch();
             }
             
-            // for test on real environment because data is too big for me to store !!
-            statement2.execute(deleteTableSQL);
+//            // for test on real environment because data is too big for me to store !!
+//            statement2.execute(deleteTableSQL);
             
             mySQLRecorder.updateSucceed(tableName);
 			

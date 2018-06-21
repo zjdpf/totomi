@@ -8,19 +8,13 @@ public class TotomiConfigure {
     // DB2 inst 1
     public static final String DB2_INST1_URL = "jdbc:db2://localhost:50000/sample";
     public static final String DB2_INST1_USERNAME = "zifeiy";
-    public static final String DB2_INST1_PASSWORD = "izzzyc";
+    public static final String DB2_INST1_PASSWORD = "password";
     public static final String DB2_INST1_SCHEMA = "ZIFEIY";
-    
-//    // DB2 inst1 on real environment
-//    public static final String DB2_INST1_URL = "jdbc:db2://154.84.100.115:60000/andwdb";
-//    public static final String DB2_INST1_USERNAME = "andw";
-//    public static final String DB2_INST1_PASSWORD = "andw";
-//    public static final String DB2_INST1_SCHEMA = "ANDW";
     
     // DB2 inst 2
     public static final String DB2_INST2_URL = "jdbc:db2://localhost:50000/sample";
     public static final String DB2_INST2_USERNAME = "zifeiy";
-    public static final String DB2_INST2_PASSWORD = "izzzyc";
+    public static final String DB2_INST2_PASSWORD = "password";
     public static final String DB2_INST2_SCHEMA = "TEST2";
     
     // MySQL

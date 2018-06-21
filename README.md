@@ -4,10 +4,10 @@ TOTOMI -- a simple project for Data desensitization on IBM DB2.
 TOTOMI：适用于DB2的数据库脱敏软件。  
 
 ### Requirements
-Redis on localhost
-MySQL on localhost
-DB2 on localhost
-JDK 1.8
+- Redis on localhost
+- MySQL on localhost
+- DB2 on localhost
+- JDK 1.8
 
 ### 使用说明
 相关配置见TotomiConfigure.java文件。  
